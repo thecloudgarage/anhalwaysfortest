@@ -35,12 +35,9 @@ chmod +x helper.sh
 * Before starting, login into the respective docker registry and alter the registry value in dockerpush.sh
 
 ```
-cd microservices-kafka
-./mvnw clean package -Dmaven.test.skip=true
-cd ..
 cd docker
-docker-compose build
-docker-compose up -d
+chmod +x build-and-run.sh
+./build-and-run.sh
 ```
 
 * Kafka & Postgresql entries are made via environmental variables
@@ -121,7 +118,7 @@ kubectl get services
 ```
 kubectl get pods -n kafka-cluster
 kubectl exec -it <kafka-pod-value> /bin/bash -n kafka-cluster
-kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic order --from-beginning
+kafka-console-consumer --bootstrap-server <afka-service.kafka-cluster:9092 --topic order --from-beginning
 ```
 
 * Typical output: Example event structure

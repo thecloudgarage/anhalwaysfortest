@@ -1,0 +1,56 @@
+version: '3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: "2181"
+      ZOOKEEPER_TICK_TIME: "2000"  
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    links:
+     - zookeeper
+    environment:
+      KAKFA_BROKER_ID: "1"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "order:5:1"
+  apache:
+    build: apache
+    links:
+     - order
+     - shipping
+     - invoicing
+    ports:
+     - "8080:80"
+  postgresql:
+    build: postgres
+    environment:
+      POSTGRES_PASSWORD: dbpass
+      POSTGRES_USER: dbuser
+  order:
+    build: ../microservice-kafka/microservice-kafka-order
+    links:
+     - kafka
+     - postgresql
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      postgresql: postgresql
+  shipping:
+    build: ../microservice-kafka/microservice-kafka-shipping
+    links:
+     - kafka
+     - postgresql
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      postgresql: postgresql
+  invoicing:
+    build: ../microservice-kafka/microservice-kafka-invoicing
+    links:
+     - kafka
+     - postgresql
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      postgresql: postgresql

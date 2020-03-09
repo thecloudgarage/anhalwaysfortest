@@ -94,5 +94,15 @@ to and which records they handle.
 
 You can also start a shell on the Kafka server `docker exec -it
 mskafka_kafka_1 /bin/sh` and then take a look at the records in the
-topic using `kafka-console-consumer.sh --bootstrap-server kafka:9092
+topic using `kafka-console-consumer --bootstrap-server kafka:9092
 --topic order --from-beginning`.
+
+## PROJECT INSPIRATION
+https://github.com/ewolff/microservice-kafka (for the order/shipping/invoicing microservices along with docker-compose running with kafka and postgres)
+https://medium.com/@raymasson/kafka-elasticsearch-connector-fa92a8e3b0bc (github url: https://github.com/raymasson/kafka-elasticsearch-connector)
+
+>> NOTE: Command to create the connector when using Docker compose method
+
+```
+curl -H "Content-Type: application/json" -X POST -d '{  "name": "order-connector",  "config": {    "connector.class":"io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",    "tasks.max": "1",    "topics": "order",    "key.ignore":"true",    "schema.ignore": "true",    "connection.url": "http://elasticsearch:9200",    "type.name": "order-type",    "name":"elasticsearch-sink"  }}' http://localhost:8083/connectors
+```
