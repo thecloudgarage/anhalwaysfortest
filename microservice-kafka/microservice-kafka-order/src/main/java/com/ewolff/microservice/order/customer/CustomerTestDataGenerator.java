@@ -18,7 +18,7 @@ public class CustomerTestDataGenerator {
 	@PostConstruct
 	public void generateTestData() {
 		customerRepository
-				.save(new Customer("Eberhard", "Wolff", "eberhard.wolff@gmail.com", "Unter den Linden", "Berlin"));
+				.save(new Customer("Ambar", "Hassani", "ambarhassani@gmail.com", "Bangalore", "India"));
 		customerRepository.save(new Customer("Rod", "Johnson", "rod@somewhere.com", "Market Street", "San Francisco"));
 	}
 

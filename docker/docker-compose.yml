@@ -17,7 +17,7 @@ services:
      - zookeeper
     environment:
       KAKFA_BROKER_ID: "1"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,EXTERNAL_PLAINTEXT://34.238.155.54:31002"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,EXTERNAL_PLAINTEXT://52.23.248.219:31002"
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,EXTERNAL_PLAINTEXT://0.0.0.0:31002"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,EXTERNAL_PLAINTEXT:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
@@ -30,7 +30,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
     depends_on:
       - zookeeper
-      - kafka
+      - kafka        
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -44,7 +44,7 @@ services:
         soft: -1
         hard: -1
 
-  connect:
+  kafka-connect:
     image: confluentinc/cp-kafka-connect:3.3.0
     links:
      - elasticsearch
@@ -55,6 +55,7 @@ services:
     depends_on:
       - zookeeper
       - kafka
+      - elasticsearch
     volumes:
       - $PWD/connect-plugins:/connect-plugins
     environment:
@@ -89,6 +90,9 @@ services:
     depends_on:
       - zookeeper
       - kafka
+    links:
+      - zookeeper
+      - kafka
     ports:
       - "8082:8082"
     environment:
@@ -99,6 +103,10 @@ services:
   kafka-topics-ui:
     image: landoop/kafka-topics-ui:latest
     depends_on:
+      - zookeeper
+      - kafka
+      - kafka-rest-proxy
+    links: 
       - zookeeper
       - kafka
       - kafka-rest-proxy
@@ -113,11 +121,15 @@ services:
     depends_on:
       - zookeeper
       - kafka
-      - connect
+      - kafka-connect
+    links:
+      - zookeeper
+      - kafka
+      - kafka-connect
     ports:
       - "8001:8000"
     environment:
-      CONNECT_URL: 'connect:8083'
+      CONNECT_URL: 'kafka-connect:8083'
 
   apache:
     build: apache
