@@ -44,6 +44,18 @@ services:
         soft: -1
         hard: -1
 
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.5.4
+    links: 
+      - elasticsearch
+    ports: 
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      XPACK_SECURITY_ENABLED: "true"
+
   kafka-connect:
     image: confluentinc/cp-kafka-connect:3.3.0
     links:
