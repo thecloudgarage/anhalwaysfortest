@@ -16,3 +16,5 @@ applications:
     postgresql: "postgresql.thecloudgarage.com:31003"
 - name: microservices-nginx-reverse-proxy
   path: nginx-reverse-proxy
+  buildpacks:
+    - https://github.com/cloudfoundry/nginx-buildpack.git
