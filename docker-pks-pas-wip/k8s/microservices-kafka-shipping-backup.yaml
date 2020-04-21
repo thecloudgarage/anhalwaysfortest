@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+  labels:
+    app: shipping
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shipping
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25% 
+  template:
+    metadata:
+      labels:
+        app: shipping
+    spec:      
+      containers:
+      - name: shipping
+        image: thecloudgarage/k8s-springboot-kafka-order-management:mskafka_shipping
+        ports:
+        - name: shipping-http
+          containerPort: 8080
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /shipment.html
+            port: 8080
+          initialDelaySeconds: 5        
+        readinessProbe:
+          httpGet:
+             path: /shipment.html
+             port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+        env:
+        - name: postgresql
+          value: postgresql
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-service.kafka-cluster:9092"

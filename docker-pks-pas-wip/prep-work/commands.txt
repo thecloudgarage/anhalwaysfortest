@@ -1,0 +1,17 @@
+To work with a specific cluster
+kubectl config set-context <cluster-name>
+
+To view resource allocations for pods across namespaces
+kubectl get po --all-namespaces -o=jsonpath="{range .items[*]}{.metadata.namespace}:{.metadata.name}{'\n'}{range .spec.containers[*]}  {.name}:{.resources.requests.cpu}{'\n'}{end}{'\n'}{end}"
+
+To show all pods with their node IP addresses
+kubectl get pod -o=custom-columns=NAME:.metadata.name,STATUS:.status.phase,NODE:.spec.nodeName --all-namespaces
+
+In case PVC is stuck at terminating
+kubectl describe pvc PVC_NAME | grep Finalizers
+kubectl patch pvc PVC_NAME -p '{"metadata":{"finalizers": []}}' --type=merge
+
+Load generator
+kubectl run --generator=run-pod/v1 -it --rm load-generator --image=busybox /bin/sh
+Hit enter for command prompt
+while true; do wget -q -O- http://php-apache.default.svc.cluster.local; done

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+  labels:
+    app: order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25% 
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:      
+      containers:
+      - name: order
+        image: thecloudgarage/k8s-springboot-kafka-order-management:mskafka_order
+        ports:
+        - name: order-http
+          containerPort: 8080
+        imagePullPolicy: Always
+        env:
+        - name: postgresql
+          value: postgresql
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-service.kafka-cluster:9092"          
