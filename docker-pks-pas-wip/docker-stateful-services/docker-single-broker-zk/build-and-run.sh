@@ -14,7 +14,7 @@ HOSTED_ZONE_ID=$( aws route53 list-hosted-zones-by-name | jq --arg name "theclou
 
 echo "Hosted zone being modified: $HOSTED_ZONE_ID"
 
-INPUT_JSON=$( cat ../../route53/route53-kafka.json | sed "s/127\.0\.0\.1/$IP/" )
+INPUT_JSON=$( cat ../../route53/route53-kafka-postgresql.json | sed "s/127\.0\.0\.1/$IP/g" )
 
 INPUT_JSON="{ \"ChangeBatch\": $INPUT_JSON }"
 

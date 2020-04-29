@@ -1,0 +1,5 @@
+applications:
+- name: microservices-nginx-reverse-proxy
+  buildpacks:
+    - https://github.com/cloudfoundry/nginx-buildpack.git
+

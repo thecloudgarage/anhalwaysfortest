@@ -1,0 +1,32 @@
+{
+  "Comment": "Update the kafka & postgresql record set",
+    "Changes": [
+      {
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "kafka.thecloudgarage.com",
+          "Type": "A",
+          "TTL": 300,
+          "ResourceRecords": [
+            {
+              "Value": "127.0.0.1"
+            }
+          ]
+        }
+      }
+	  {
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "postgresql.thecloudgarage.com",
+          "Type": "A",
+          "TTL": 300,
+          "ResourceRecords": [
+            {
+              "Value": "127.0.0.1"
+            }
+          ]
+        }
+      }
+    ]
+}
+
