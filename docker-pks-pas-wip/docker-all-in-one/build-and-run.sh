@@ -1,12 +1,21 @@
 #!/bin/bash
+
+echo "LETS BUILD OUR SPRINGBOOT APPS USING MAVEN"
+
 cd ../microservice-kafka/
 sudo ./mvnw clean package -Dmaven.test.skip=true
+
+echo "NOW LETS BUILD AND RUN OUR DOCKER CONTAINERS"
 
 cd ../docker-all-in-one
 docker-compose build
 docker-compose up -d
 
+echo "NOW IT'S TIME TO OBSERVE KAFKA"
+echo "LET'S START BY DESCRIBING OUR TOPIC"
+
 docker exec mskafka_kafka_1 kafka-topics --describe --zookeeper zookeeper:2181 --topic order
+
 docker exec mskafka_kafka_1 kafka-consumer-groups  --list --bootstrap-server kafka:9092
 docker exec mskafka_kafka_1 kafka-consumer-groups --describe --group shipping --bootstrap-server kafka:9092
 docker exec mskafka_kafka_1 kafka-consumer-groups --describe --group invoicing --bootstrap-server kafka:9092
