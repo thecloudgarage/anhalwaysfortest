@@ -13,8 +13,8 @@
             }
           ]
         }
-      }
-	  {
+      },
+      {
         "Action": "UPSERT",
         "ResourceRecordSet": {
           "Name": "postgresql.thecloudgarage.com",
