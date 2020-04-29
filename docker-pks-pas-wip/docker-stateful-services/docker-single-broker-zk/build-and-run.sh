@@ -1,7 +1,7 @@
 #!/bin/bash
-cd ../microservice-kafka/
+cd ../../microservice-kafka/
 sudo ./mvnw clean package -Dmaven.test.skip=true
-cd ../docker/
+cd ../docker-stateful-services/docker-single-broker-zk/
 docker-compose build
 docker-compose up -d
 sleep 2m
