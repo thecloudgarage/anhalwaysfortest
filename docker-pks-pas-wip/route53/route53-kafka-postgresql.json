@@ -4,7 +4,7 @@
       {
         "Action": "UPSERT",
         "ResourceRecordSet": {
-          "Name": "kafka.thecloudgarage.com",
+          "Name": "kafka1.aws.thecloudgarage.com",
           "Type": "A",
           "TTL": 300,
           "ResourceRecords": [
@@ -17,7 +17,7 @@
       {
         "Action": "UPSERT",
         "ResourceRecordSet": {
-          "Name": "postgresql.thecloudgarage.com",
+          "Name": "kafka2.aws.thecloudgarage.com",
           "Type": "A",
           "TTL": 300,
           "ResourceRecords": [
@@ -26,7 +26,45 @@
             }
           ]
         }
-      }
+      },
+      {
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "postgresql-order.aws.thecloudgarage.com",
+          "Type": "A",
+          "TTL": 300,
+          "ResourceRecords": [
+            {
+              "Value": "127.0.0.1"
+            }
+          ]
+        }
+      },
+      {  
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "postgresql-shipping.aws.thecloudgarage.com",
+          "Type": "A",
+          "TTL": 300,
+          "ResourceRecords": [
+            {
+              "Value": "127.0.0.1"
+            }
+          ]
+        }
+      },
+      { 
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "postgresql-invoicing.aws.thecloudgarage.com",
+          "Type": "A",
+          "TTL": 300,
+          "ResourceRecords": [
+            {
+              "Value": "127.0.0.1"
+            }
+          ]
+        }
+      }	  
     ]
 }
-

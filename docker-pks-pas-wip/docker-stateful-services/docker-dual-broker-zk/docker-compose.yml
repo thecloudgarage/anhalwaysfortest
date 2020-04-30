@@ -2,16 +2,16 @@ version: '3'
 services:
   zookeeper1:
     image: confluentinc/cp-zookeeper:latest
-	ports:
-	  - "32181:2181"
+    ports:
+      - "32181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: "2181"
       ZOOKEEPER_TICK_TIME: "2000"
 
   zookeeper2:
     image: confluentinc/cp-zookeeper:latest
-	ports:
-	  - "32182:2181"	
+    ports:
+      - "32182:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: "2181"
       ZOOKEEPER_TICK_TIME: "2000"
@@ -20,13 +20,13 @@ services:
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper1
-	  - zookeeper2
+      - zookeeper2
     ports:
       - "9092:9092"
       - "31001:31001"
     links:
-     - zookeeper1
-	 - zookeeper2
+      - zookeeper1
+      - zookeeper2
     environment:
       KAKFA_BROKER_ID: "1"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,EXTERNAL_PLAINTEXT://kafka1.aws.thecloudgarage.com:31001"
@@ -41,13 +41,13 @@ services:
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper1
-	  - zookeeper2
+      - zookeeper2
     ports:
       - "9093:9093"
       - "31002:31002"
     links:
      - zookeeper1
-	 - zookeeper2
+     - zookeeper2
     environment:
       KAKFA_BROKER_ID: "2"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9093,EXTERNAL_PLAINTEXT://kafka2.aws.thecloudgarage.com:31002"
@@ -63,10 +63,10 @@ services:
     depends_on:
       - zookeeper1
       - zookeeper2
-	  - kafka1
-	  - kafka2
+      - kafka1
+      - kafka2
       - kafka-connect
-	 ports:
+    ports:
       - "9200:9200"
       - "9300:9300"
     environment:
@@ -96,16 +96,16 @@ services:
     links:
      - elasticsearch
      - kafka1
-	 - kafka2
+     - kafka2
      - zookeeper1
-	 - zookeeper2
+     - zookeeper2
     ports:
       - 8083:8083
     depends_on:
       - zookeeper1
-	  - zookeeper2
+      - zookeeper2
       - kafka1
-	  - kafka2
+      - kafka2
     volumes:
       - $PWD/connect-plugins:/connect-plugins
     environment:
@@ -139,14 +139,14 @@ services:
     hostname: kafka-rest-proxy
     depends_on:
       - zookeeper1
-	  - zookeeper2
+      - zookeeper2
       - kafka1
-	  - kafka2
+      - kafka2
     links:
       - zookeeper1
-	  - zookeeper2
+      - zookeeper2
       - kafka1
-	  - kafka2
+      - kafka2
     ports:
       - "8082:8082"
     environment:
@@ -158,14 +158,14 @@ services:
     image: landoop/kafka-topics-ui:latest
     depends_on:
       - zookeeper1
-	  - zookeeper2
+      - zookeeper2
       - kafka1
-	  - kafka2
+      - kafka2
       - kafka-rest-proxy
     links:
       - zookeeper1
-	  - zookeeper2
-	  - kafka1
+      - zookeeper2
+      - kafka1
       - kafka2
       - kafka-rest-proxy
     ports:
@@ -178,15 +178,15 @@ services:
     image: landoop/kafka-connect-ui:latest
     depends_on:
       - zookeeper1
-	  - zookeeper2
+      - zookeeper2
       - kafka1
-	  - kafka2
+      - kafka2
       - kafka-connect
     links:
       - zookeeper1
-	  - zookeeper2
+      - zookeeper2
       - kafka1
-	  - kafka2
+      - kafka2
       - kafka-connect
     ports:
       - "8001:8000"
@@ -194,25 +194,25 @@ services:
       CONNECT_URL: 'kafka-connect:8083'
 
   postgresql-order:
-    build: postgres-order
+    build: postgresql-order
     ports:
-            - "31011:5432"
+      - "31011:5432"
     environment:
       POSTGRES_PASSWORD: dbpass
       POSTGRES_USER: dbuser
 
   postgresql-shipping:
-    build: postgres-shipping
+    build: postgresql-shipping
     ports:
-            - "31012:5432"
+      - "31012:5432"
     environment:
       POSTGRES_PASSWORD: dbpass
       POSTGRES_USER: dbuser
 
   postgresql-invoicing:
-    build: postgres-invoicing
+    build: postgresql-invoicing
     ports:
-            - "31013:5432"
+      - "31013:5432"
     environment:
       POSTGRES_PASSWORD: dbpass
       POSTGRES_USER: dbuser

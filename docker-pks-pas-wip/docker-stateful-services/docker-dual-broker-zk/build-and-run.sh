@@ -1,7 +1,10 @@
 #!/bin/bash
+cd ../../route53
+chmod +x route53-kafka-postgresql.sh
+./route53-kafka-postgresql.sh
 cd ../microservice-kafka/
 sudo ./mvnw clean package -Dmaven.test.skip=true
-cd ../docker/
+cd ../docker-stateful-services/docker-dual-broker-zk/
 docker-compose build
 docker-compose up -d
 sleep 2m
