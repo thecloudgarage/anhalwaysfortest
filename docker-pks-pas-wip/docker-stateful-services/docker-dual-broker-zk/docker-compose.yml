@@ -118,7 +118,7 @@ services:
     volumes:
       - $PWD/connect-plugins:/connect-plugins
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: kafka1:9091,kafka2:9092
+      CONNECT_BOOTSTRAP_SERVERS: INTERNAL_PLAINTEXT1://kafka1:9091,INTERNAL_PLAINTEXT2://kafka2:9092
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: "connect"
       CONNECT_CONFIG_STORAGE_TOPIC: connect-config
@@ -160,7 +160,7 @@ services:
       - "8082:8082"
     environment:
       KAFKA_REST_HOST_NAME: kafka-rest-proxy
-      KAFKA_REST_BOOTSTRAP_SERVERS: kafka1:9091,kafka2:9092
+      KAFKA_REST_BOOTSTRAP_SERVERS: INTERNAL_PLAINTEXT1://kafka1:9091,INTERNAL_PLAINTEXT2://kafka2:9092
       KAFKA_REST_LISTENERS: 'http://kafka-rest-proxy:8082'
 
   kafka-topics-ui:
