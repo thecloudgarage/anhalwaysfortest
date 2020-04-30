@@ -103,7 +103,7 @@ services:
       XPACK_SECURITY_ENABLED: "true"
 
   kafka-connect:
-    image: confluentinc/cp-kafka-connect:latest
+    image: confluentinc/cp-kafka-connect:3.3.0
     ports:
       - "8083:8083"
     links:
@@ -146,7 +146,7 @@ services:
 
 
   kafka-rest-proxy:
-    image: confluentinc/cp-kafka-rest:latest
+    image: confluentinc/cp-kafka-rest:4.1.1
     hostname: kafka-rest-proxy
     ports:
       - "8082:8082"
