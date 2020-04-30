@@ -2,25 +2,19 @@ version: '3'
 services:
   zookeeper1:
     image: confluentinc/cp-zookeeper:latest
-    links: 
-      - zookeeper2
+    ports:
+      - "32181:32181"
     environment:
-      ZOOKEEPER_SERVER_ID: 1      
       ZOOKEEPER_CLIENT_PORT: "32181"
       ZOOKEEPER_TICK_TIME: "2000"
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper1:12888:13888;zookeeper2:22888:23888
 
   zookeeper2:
     image: confluentinc/cp-zookeeper:latest
+    ports:
+      - "32182:32182"
     environment:
-      ZOOKEEPER_SERVER_ID: 2
       ZOOKEEPER_CLIENT_PORT: "32182"
       ZOOKEEPER_TICK_TIME: "2000"
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper1:12888:13888;zookeeper2:22888:23888
 
   kafka1:
     image: confluentinc/cp-kafka:latest
@@ -28,13 +22,14 @@ services:
       - zookeeper1
       - zookeeper2
     ports:
+      - "9092:9092"
       - "31001:31001"
     links:
       - zookeeper1
       - zookeeper2
     environment:
       KAKFA_BROKER_ID: "1"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka1:9092,EXTERNAL_PLAINTEXT://kafka1.aws.thecloudgarage.com:31001"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,EXTERNAL_PLAINTEXT://kafka1.aws.thecloudgarage.com:31001"
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,EXTERNAL_PLAINTEXT://0.0.0.0:31001"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,EXTERNAL_PLAINTEXT:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
@@ -48,13 +43,14 @@ services:
       - zookeeper1
       - zookeeper2
     ports:
+      - "9093:9093"
       - "31002:31002"
     links:
      - zookeeper1
      - zookeeper2
     environment:
       KAKFA_BROKER_ID: "2"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka2:9093,EXTERNAL_PLAINTEXT://kafka2.aws.thecloudgarage.com:31002"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9093,EXTERNAL_PLAINTEXT://kafka2.aws.thecloudgarage.com:31002"
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9093,EXTERNAL_PLAINTEXT://0.0.0.0:31002"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,EXTERNAL_PLAINTEXT:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
@@ -109,11 +105,10 @@ services:
       - zookeeper2
       - kafka1
       - kafka2
-      - elasticsearch
     volumes:
       - $PWD/connect-plugins:/connect-plugins
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: kafka1:9092,kafka2:9093
+      CONNECT_BOOTSTRAP_SERVERS: kafka1:9092
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: "connect"
       CONNECT_CONFIG_STORAGE_TOPIC: connect-config
@@ -131,7 +126,7 @@ services:
       CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
       CONNECT_REST_ADVERTISED_HOST_NAME: "connect"
-      CONNECT_ZOOKEEPER_CONNECT: zookeeper1:32181,zookeeper2:32182
+      CONNECT_ZOOKEEPER_CONNECT: 'zookeeper1:32181,zookeeper2:32182'
       CONNECT_PLUGIN_PATH: /connect-plugins
       CONNECT_LOG4J_ROOT_LOGLEVEL: INFO
       CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
@@ -155,7 +150,7 @@ services:
       - "8082:8082"
     environment:
       KAFKA_REST_HOST_NAME: kafka-rest-proxy
-      KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:32181,zookeeper2:32182
+      KAFKA_REST_ZOOKEEPER_CONNECT: 'zookeeper:32181,zookeeper2:32182'
       KAFKA_REST_LISTENERS: 'http://kafka-rest-proxy:8082'
 
   kafka-topics-ui:
