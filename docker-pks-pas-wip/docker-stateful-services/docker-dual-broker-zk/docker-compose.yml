@@ -118,16 +118,12 @@ services:
     volumes:
       - $PWD/connect-plugins:/connect-plugins
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: INTERNAL_PLAINTEXT1://kafka1:9091,INTERNAL_PLAINTEXT2://kafka2:9092
+      CONNECT_BOOTSTRAP_SERVERS: kafka1:9091,kafka2:9092
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: "connect"
       CONNECT_CONFIG_STORAGE_TOPIC: connect-config
       CONNECT_OFFSET_STORAGE_TOPIC: connect-offsets
       CONNECT_STATUS_STORAGE_TOPIC: connect-status
-      CONNECT_REPLICATION_FACTOR: 1
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
       CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
@@ -136,7 +132,6 @@ services:
       CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
       CONNECT_REST_ADVERTISED_HOST_NAME: "connect"
-      CONNECT_ZOOKEEPER_CONNECT: zookeeper1:32181,zookeeper2:32182
       CONNECT_PLUGIN_PATH: /connect-plugins
       CONNECT_LOG4J_ROOT_LOGLEVEL: INFO
       CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
