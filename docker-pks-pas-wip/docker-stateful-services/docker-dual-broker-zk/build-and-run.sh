@@ -8,6 +8,13 @@ cd ../docker-stateful-services/docker-dual-broker-zk/
 docker-compose build
 docker-compose up -d
 sleep 2m
-docker exec mskafka_kafka1_1 kafka-topics --create --topic order --replication-factor 1 --partitions 3  --zookeeper zookeeper1:32181
+docker exec mskafka_kafka1_1 kafka-topics --create --topic order --replication-factor 1 --partitions 2  --zookeeper zookeeper1:32181
+docker exec mskafka_kafka1_1 kafka-topics --create --topic connect-config --partitions 1 --replication-factor 1 \
+	--if-not-exists --zookeeper zookeeper1:32181
+docker exec mskafka_kafka1_1 kafka-topics --create --topic connect-offsets --partitions 1 --replication-factor 1 \
+	--if-not-exists --zookeeper zookeeper1:32181
+docker exec mskafka_kafka1_1 kafka-topics --create --topic connect-status --partitions 1 --replication-factor 1 \
+	--if-not-exists --zookeeper zookeeper1:32181
+sleep 2m
 curl -H "Content-Type: application/json" -X POST -d '{  "name": "order-connector",  "config": {    "connector.class":"io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",    "tasks.max": "1",    "topics": "order",    "key.ignore":"true",    "schema.ignore": "true",    "connection.url": "http://elasticsearch:9200",    "type.name": "order-type",    "name":"elasticsearch-sink"  }}' http://localhost:8083/connectors
 echo "done"
