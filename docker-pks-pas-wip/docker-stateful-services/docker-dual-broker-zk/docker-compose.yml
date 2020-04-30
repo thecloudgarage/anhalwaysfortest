@@ -32,6 +32,7 @@ services:
       - zookeeper1
       - zookeeper2
     ports:
+      - "9091:9091"
       - "31001:31001"
     links:
       - zookeeper1
@@ -43,20 +44,22 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL_PLAINTEXT1:PLAINTEXT,EXTERNAL_PLAINTEXT1:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL_PLAINTEXT1"
       ALLOW_PLAINTEXT_LISTENER: "yes"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "2"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:32181,zookeeper2:32182
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper1:32181,zookeeper2:32182"
 
   kafka2:
     image: confluentinc/cp-kafka:latest
     depends_on:
-      - zookeeper1
+      - zookeeper1    
       - zookeeper2
+      - kafka1
     ports:
+      - "9092:9092"
       - "31002:31002"
     links:
-     - kafka1
-     - zookeeper1
-     - zookeeper2
+      - kafka1
+      - zookeeper1
+      - zookeeper2
     environment:
       KAKFA_BROKER_ID: "2"
       KAFKA_ADVERTISED_LISTENERS: "INTERNAL_PLAINTEXT2://kafka2:9092,EXTERNAL_PLAINTEXT2://kafka2.aws.thecloudgarage.com:31002"
@@ -64,8 +67,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL_PLAINTEXT2:PLAINTEXT,EXTERNAL_PLAINTEXT2:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL_PLAINTEXT2"
       ALLOW_PLAINTEXT_LISTENER: "yes"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "2"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:32181,zookeeper2:32182
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper1:32181,zookeeper2:32182"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
@@ -100,25 +103,25 @@ services:
       XPACK_SECURITY_ENABLED: "true"
 
   kafka-connect:
-    image: confluentinc/cp-kafka-connect:3.3.0
-    links:
-     - elasticsearch
-     - kafka1
-     - kafka2
-     - zookeeper1
-     - zookeeper2
+    image: confluentinc/cp-kafka-connect:latest
     ports:
-      - 8083:8083
-    depends_on:
+      - "8083:8083"
+    links:
+      - elasticsearch
+      - kafka1
+      - kafka2
       - zookeeper1
       - zookeeper2
+    depends_on:
+      - zookeeper1
       - kafka1
+      - zookeeper2
       - kafka2
       - elasticsearch
     volumes:
       - $PWD/connect-plugins:/connect-plugins
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: kafka1:9091
+      CONNECT_BOOTSTRAP_SERVERS: "kafka1:9091"
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: "connect"
       CONNECT_CONFIG_STORAGE_TOPIC: connect-config
@@ -143,31 +146,31 @@ services:
 
 
   kafka-rest-proxy:
-    image: confluentinc/cp-kafka-rest:4.1.1
+    image: confluentinc/cp-kafka-rest:latest
     hostname: kafka-rest-proxy
+    ports:
+      - "8082:8082"
     depends_on:
       - zookeeper1
-      - zookeeper2
       - kafka1
+      - zookeeper2
       - kafka2
     links:
       - zookeeper1
       - zookeeper2
       - kafka1
       - kafka2
-    ports:
-      - "8082:8082"
     environment:
       KAFKA_REST_HOST_NAME: kafka-rest-proxy
-      KAFKA_REST_BOOTSTRAP_SERVERS: INTERNAL_PLAINTEXT1://kafka1:9091,INTERNAL_PLAINTEXT2://kafka2:9092
+      KAFKA_REST_BOOTSTRAP_SERVERS: "INTERNAL_PLAINTEXT1://kafka1:9091,INTERNAL_PLAINTEXT2://kafka2:9092"
       KAFKA_REST_LISTENERS: 'http://kafka-rest-proxy:8082'
 
   kafka-topics-ui:
     image: landoop/kafka-topics-ui:latest
     depends_on:
       - zookeeper1
-      - zookeeper2
       - kafka1
+      - zookeeper2
       - kafka2
       - kafka-rest-proxy
     links:
@@ -186,8 +189,8 @@ services:
     image: landoop/kafka-connect-ui:latest
     depends_on:
       - zookeeper1
-      - zookeeper2
       - kafka1
+      - zookeeper2
       - kafka2
       - kafka-connect
     links:
