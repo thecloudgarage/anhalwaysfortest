@@ -1,6 +1,0 @@
-applications:
-- name: microservices-kafka-shipping
-  path: ./target/microservice-kafka-shipping-0.0.1-SNAPSHOT.jar
-  env:
-    SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka.thecloudgarage.com:31002"
-    postgresql: "postgresql.thecloudgarage.com:31003"
