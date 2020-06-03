@@ -1,0 +1,34 @@
+Commands have been verified for the dual broker/zookeeper configuration on docker-compose
+
+docker exec mskafka_kafka1_1 kafka-topics --describe --zookeeper zookeeper1:32181 --topic order
+docker exec mskafka_kafka1_1 kafka-topics --describe --zookeeper zookeeper2:32182 --topic order
+docker exec mskafka_kafka2_1 kafka-topics --describe --zookeeper zookeeper1:32181 --topic order
+docker exec mskafka_kafka2_1 kafka-topics --describe --zookeeper zookeeper2:32182 --topic order
+
+docker exec mskafka_kafka1_1 kafka-consumer-groups  --list --bootstrap-server kafka1:9091
+docker exec mskafka_kafka1_1 kafka-consumer-groups --describe --group shipping --bootstrap-server kafka1:9091
+docker exec mskafka_kafka1_1 kafka-consumer-groups --describe --group invoicing --bootstrap-server kafka1:9091
+
+docker exec mskafka_kafka1_1 kafka-consumer-groups  --list --bootstrap-server kafka2:9092
+docker exec mskafka_kafka1_1 kafka-consumer-groups --describe --group shipping --bootstrap-server kafka2:9092
+docker exec mskafka_kafka1_1 kafka-consumer-groups --describe --group invoicing --bootstrap-server kafka2:9092
+
+docker exec mskafka_kafka2_1 kafka-consumer-groups  --list --bootstrap-server kafka1:9091
+docker exec mskafka_kafka2_1 kafka-consumer-groups --describe --group shipping --bootstrap-server kafka1:9091
+docker exec mskafka_kafka2_1 kafka-consumer-groups --describe --group invoicing --bootstrap-server kafka1:9091
+
+docker exec mskafka_kafka2_1 kafka-consumer-groups  --list --bootstrap-server kafka2:9092
+docker exec mskafka_kafka2_1 kafka-consumer-groups --describe --group shipping --bootstrap-server kafka2:9092
+docker exec mskafka_kafka2_1 kafka-consumer-groups --describe --group invoicing --bootstrap-server kafka2:9092
+
+docker exec mskafka_kafka1_1 kafka-topics --alter --zookeeper zookeeper1:32181 --topic order --partitions 4
+
+NOTE YOU CANNOT CHANGE THE REPLICATION FACTOR VIA THE ABOVE COMMAND.
+
+Assuming you restart a broker say mskafka_kafka1_1 container., when the container comes up, the broker does not automatically assume the leadership for it's partition. In the output of the command below, prior to the failure the partitions would be distributed between the two brokers and once kafka1 fails, the kafka2 would assume leadership for both partitions. Even if kafka1 comes up the leadership does not transtion back to kafka1. 
+
+docker exec mskafka_kafka1_1 kafka-topics --describe --zookeeper zookeeper1:32181 --topic order
+
+In order to force the leadership back to kafka1... execute the below command
+
+docker exec mskafka_kafka1_1 kafka-preferred-replica-election --zookeeper zookeeper1:32181
